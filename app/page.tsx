@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Github, Linkedin, ExternalLink, ChevronDown } from "lucide-react"
+import { Github, Linkedin, ExternalLink, ChevronDown, X } from "lucide-react"
 import Typewriter from "typewriter-effect"
 
 import { Button } from "@/components/ui/button"
@@ -79,9 +79,19 @@ interface Project {
   link?: string
 }
 
+interface Photo {
+  src: string
+  alt: string
+  width: number
+  height: number
+  location?: string
+  description?: string
+}
+
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState("home")
   const [expandedProject, setExpandedProject] = useState<Project | null>(null)
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null)
 
   const projects: Project[] = [
     {
@@ -126,9 +136,60 @@ export default function Portfolio() {
     },
   ]
 
+  const photos: Photo[] = [
+    {
+      src: "/cafewall.JPG?height=600&width=800",
+      alt: "Wall over the cafe",
+      width: 800,
+      height: 600,
+      location: "Boston, Massachusetts",
+      description: "Captured this wall of artistic creations in a cafe while studying.",
+    },
+    {
+      src: "/chillguy.JPG?height=800&width=600",
+      alt: "Taking the wind",
+      width: 600,
+      height: 800,
+      location: "Boston, Massachusetts",
+      description: "On a sunny Sunday, a man takes the chilly wind like a chill guy.",
+    },
+    {
+      src: "/prudential.JPG?height=600&width=800",
+      alt: "Mall decor",
+      width: 800,
+      height: 600,
+      location: "Boston, Massachusetts",
+      description: "Low exposure shot inside the Prudential Center in Boston.",
+    },
+    {
+      src: "/nightlight.JPG?height=800&width=600",
+      alt: "Night light",
+      width: 600,
+      height: 800,
+      location: "Boston, Massachusetts",
+      description: "A corner bar with night light despite being closed at night.",
+    },
+    {
+      src: "/placeholder.svg?height=600&width=800",
+      alt: "City skyline",
+      width: 800,
+      height: 600,
+      location: "Boston, Massachusetts",
+      description: "Night photography of the Boston skyline reflecting on the Charles River.",
+    },
+    {
+      src: "/placeholder.svg?height=800&width=600",
+      alt: "Wildlife photography",
+      width: 600,
+      height: 800,
+      location: "Middlesex Fells Reservation",
+      description: "Patient waiting paid off with this close-up of local wildlife.",
+    },
+  ]
+
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["home", "about", "experience", "projects"]
+      const sections = ["home", "about", "experience", "projects", "photography"]
       const scrollPosition = window.scrollY + 100
 
       for (const section of sections) {
@@ -201,15 +262,14 @@ export default function Portfolio() {
               transition={{ duration: 0.5, staggerChildren: 0.1 }}
               className="hidden md:flex space-x-8"
             >
-              {["home", "about", "experience", "projects"].map((section) => (
+              {["home", "about", "experience", "projects", "photography"].map((section) => (
                 <li key={section}>
                   <RippleButton
                     onClick={() => scrollToSection(section)}
-                    className={`text-sm font-medium transition-all duration-200 hover:text-blue-600 relative px-3 py-2 rounded-md ${
-                      activeSection === section
-                        ? "text-blue-600 after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-blue-600 after:bottom-0 after:left-0 hover:bg-blue-50/50"
-                        : "text-gray-600 hover:bg-blue-50/50"
-                    }`}
+                    className={`text-sm font-medium transition-all duration-200 hover:text-blue-600 relative px-3 py-2 rounded-md ${activeSection === section
+                      ? "text-blue-600 after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-blue-600 after:bottom-0 after:left-0 hover:bg-blue-50/50"
+                      : "text-gray-600 hover:bg-blue-50/50"
+                      }`}
                   >
                     {section.charAt(0).toUpperCase() + section.slice(1)}
                   </RippleButton>
@@ -261,7 +321,7 @@ export default function Portfolio() {
               <div className="text-xl md:text-2xl lg:text-3xl font-medium text-blue-600 h-16">
                 <Typewriter
                   options={{
-                    strings: ["Student", "Developer", "Problem Solver"],
+                    strings: ["Student", "Developer", "Problem Solver", "Photographer"],
                     autoStart: true,
                     loop: true,
                   }}
@@ -532,6 +592,84 @@ export default function Portfolio() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Photography Section */}
+      <section id="photography" className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Photography</h2>
+            <div className="w-20 h-1 bg-blue-600 mx-auto"></div>
+            <p className="mt-2 text-gray-600 max-w-2xl mx-auto italic">
+              Taken on Fujifilm X-M5
+            </p>
+            <p className="mt-6 text-gray-600 max-w-2xl mx-auto">
+              Beyond coding, I have a passion for photography. I enjoy capturing moments that tell stories and evoke
+              emotions. Here are some of my favorite shots from my journey in photography.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {photos.map((photo, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                className="cursor-pointer group"
+                onClick={() => setSelectedPhoto(photo)}
+              >
+                <div className="relative h-64 overflow-hidden rounded-lg shadow-md">
+                  <Image
+                    src={photo.src || "/placeholder.svg"}
+                    alt={photo.alt}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                    <h3 className="text-white font-medium">{photo.location}</h3>
+                    <p className="text-white/80 text-sm line-clamp-2">{photo.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Photo Modal */}
+          <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto p-1 sm:p-6">
+              <div
+                className="relative w-full"
+                style={{ height: selectedPhoto?.height ? `${Math.min(600, selectedPhoto.height)}px` : "500px" }}
+              >
+                {selectedPhoto && (
+                  <Image
+                    src={selectedPhoto.src || "/placeholder.svg"}
+                    alt={selectedPhoto.alt}
+                    fill
+                    className="object-contain rounded-md"
+                  />
+                )}
+              </div>
+              <div className="p-4">
+                <h3 className="text-xl font-semibold text-blue-700">{selectedPhoto?.location}</h3>
+                <p className="mt-2 text-gray-600">{selectedPhoto?.description}</p>
+              </div>
+              <DialogClose className="absolute top-2 right-2 rounded-full p-2 bg-white/80 hover:bg-white text-gray-700">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
         </div>
       </section>
 
